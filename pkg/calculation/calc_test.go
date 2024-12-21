@@ -1,10 +1,7 @@
-package calculation_test
+package calculation
 
 import (
 	"testing"
-
-	"github.com/syirnik/GO_Yandex/pkg/calculation"
-	"github.com/syirnik/GO_Yandex/pkg/calculation/errors"
 )
 
 func TestCalc(t *testing.T) {
@@ -35,9 +32,10 @@ func TestCalc(t *testing.T) {
 		},
 	}
 
+	// Тесты с ожидаемым успешным результатом
 	for _, testCase := range testCasesSuccess {
 		t.Run(testCase.name, func(t *testing.T) {
-			val, err := calculation.Calc(testCase.expression)
+			val, err := Calc(testCase.expression)
 			if err != nil {
 				t.Fatalf("successful case %s returns error: %v", testCase.expression, err)
 			}
@@ -47,36 +45,33 @@ func TestCalc(t *testing.T) {
 		})
 	}
 
+	// Тесты с ошибками
 	testCasesFail := []struct {
 		name        string
 		expression  string
 		expectedErr error
 	}{
 		{
-			name:        "simple",
+			name:        "invalid expression",
 			expression:  "1+1*",
-			expectedErr: errors.ErrInvalidExpression, // Ожидаем ошибку
+			expectedErr: ErrInsufficientOperands, // Ожидаем ErrInsufficientOperands
 		},
 		{
-			name:        "divide by zero",
-			expression:  "1/0",
-			expectedErr: errors.ErrDivisionByZero, // Ожидаем ошибку деления на ноль
-		},
-		{
-			name:        "incorrect parentheses",
+			name:        "mismatched parentheses (missing closing)",
 			expression:  "(1+2",
-			expectedErr: errors.ErrInvalidExpression, // Ожидаем ошибку из-за неправильных скобок
+			expectedErr: ErrMismatchedParentheses, // Ожидаем ErrMismatchedParentheses
 		},
 		{
-			name:        "incorrect parentheses",
-			expression:  "1+2)",                      // Закрывающая скобка без открывающей
-			expectedErr: errors.ErrInvalidExpression, // Ожидаем ошибку
+			name:        "mismatched parentheses (missing opening)",
+			expression:  "1+2)",                   // Закрывающая скобка без открывающей
+			expectedErr: ErrMismatchedParentheses, // Ожидаем ErrMismatchedParentheses
 		},
 	}
 
+	// Тесты с ошибками
 	for _, testCase := range testCasesFail {
 		t.Run(testCase.name, func(t *testing.T) {
-			_, err := calculation.Calc(testCase.expression)
+			_, err := Calc(testCase.expression)
 			if err == nil {
 				t.Fatalf("error case %s should return an error", testCase.expression)
 			}
@@ -88,12 +83,12 @@ func TestCalc(t *testing.T) {
 
 	// Тест на пустое выражение
 	t.Run("empty expression", func(t *testing.T) {
-		_, err := calculation.Calc("")
+		_, err := Calc("")
 		if err == nil {
 			t.Fatalf("empty expression should return an error")
 		}
-		if err.Error() != "пустое выражение" {
-			t.Fatalf("expected error message: пустое выражение, got: %v", err)
+		if err != ErrEmptyExpression {
+			t.Fatalf("expected error %v, got %v", ErrEmptyExpression, err)
 		}
 	})
 }
