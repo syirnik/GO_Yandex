@@ -1,10 +1,8 @@
-package main
+package calculation
 
 import (
-	"errors"
 	"strconv"
 	"strings"
-	"testing"
 	"unicode"
 )
 
@@ -69,7 +67,7 @@ func infixToPostfix(tokens []string) ([]string, error) {
 			}
 			// Убираем открывающую скобку
 			if len(operators) == 0 {
-				return nil, errors.New("некорректная расстановка скобок")
+				return nil, ErrMismatchedParentheses
 			}
 			operators = operators[:len(operators)-1]
 		} else if token == "+" || token == "-" || token == "*" || token == "/" {
@@ -85,7 +83,7 @@ func infixToPostfix(tokens []string) ([]string, error) {
 	// Переносим оставшиеся операторы в выход
 	for len(operators) > 0 {
 		if operators[len(operators)-1] == "(" {
-			return nil, errors.New("некорректная расстановка скобок")
+			return nil, ErrMismatchedParentheses
 		}
 		output = append(output, operators[len(operators)-1])
 		operators = operators[:len(operators)-1]
@@ -109,7 +107,7 @@ func evaluatePostfix(tokens []string) (float64, error) {
 		} else if token == "+" || token == "-" || token == "*" || token == "/" {
 			// Если это оператор, извлекаем два числа из стека
 			if len(stack) < 2 {
-				return 0, errors.New("некорректное выражение")
+				return 0, ErrInsufficientOperands
 			}
 			b := stack[len(stack)-1]
 			a := stack[len(stack)-2]
@@ -125,7 +123,7 @@ func evaluatePostfix(tokens []string) (float64, error) {
 				result = a * b
 			case "/":
 				if b == 0 {
-					return 0, errors.New("деление на ноль")
+					return 0, ErrDivisionByZero
 				}
 				result = a / b
 			}
@@ -135,7 +133,7 @@ func evaluatePostfix(tokens []string) (float64, error) {
 
 	// В конце в стеке должно остаться одно значение — результат
 	if len(stack) != 1 {
-		return 0, errors.New("некорректное выражение")
+		return 0, ErrInvalidExpression
 	}
 
 	return stack[0], nil
@@ -143,6 +141,11 @@ func evaluatePostfix(tokens []string) (float64, error) {
 
 // Основная функция калькулятора
 func Calc(expression string) (float64, error) {
+	// Проверка на пустое выражение
+	if expression == "" {
+		return 0, ErrEmptyExpression
+	}
+
 	// 1. Парсим выражение в токены
 	tokens := tokenize(expression)
 
@@ -154,70 +157,4 @@ func Calc(expression string) (float64, error) {
 
 	// 3. Вычисляем результат постфиксного выражения
 	return evaluatePostfix(postfix)
-}
-
-// Функция тестирования
-func TestCalc(t *testing.T) {
-	testCasesSuccess := []struct {
-		name           string
-		expression     string
-		expectedResult float64
-	}{
-		{
-			name:           "simple",
-			expression:     "1+1",
-			expectedResult: 2,
-		},
-		{
-			name:           "priority",
-			expression:     "(2+2)*2",
-			expectedResult: 8,
-		},
-		{
-			name:           "priority",
-			expression:     "2+2*2",
-			expectedResult: 6,
-		},
-		{
-			name:           "/",
-			expression:     "1/2",
-			expectedResult: 0.5,
-		},
-	}
-
-	for _, testCase := range testCasesSuccess {
-		t.Run(testCase.name, func(t *testing.T) {
-			val, err := Calc(testCase.expression)
-			if err != nil {
-				t.Fatalf("successful case %s returns error", testCase.expression)
-			}
-			if val != testCase.expectedResult {
-				t.Fatalf("%f should be equal %f", val, testCase.expectedResult)
-			}
-		})
-	}
-
-	testCasesFail := []struct {
-		name        string
-		expression  string
-		expectedErr error
-	}{
-		{
-			name:       "simple",
-			expression: "1+1*",
-		},
-		{
-			name:       "divide by zero",
-			expression: "1/0",
-		},
-	}
-
-	for _, testCase := range testCasesFail {
-		t.Run(testCase.name, func(t *testing.T) {
-			_, err := Calc(testCase.expression)
-			if err == nil {
-				t.Fatalf("error case %s should return an error", testCase.expression)
-			}
-		})
-	}
 }
