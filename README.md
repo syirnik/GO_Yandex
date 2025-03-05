@@ -226,7 +226,7 @@ git clone https://github.com/syirnik/GO_Yandex
 ```
 2. Перейдите в каталог проекта
 ```bash
-cd calculate_project
+cd GO_Yandex
 ```
 3. Установите все необходимые зависимости
 ```bash
@@ -285,7 +285,7 @@ Worker 5 started and waiting for tasks...
 
 ### 1. Используя веб-интерфейс 
    
-Откройте файл `frontend/index.html` в браузере **или** запустите локальный сервер:
+Откройте файл `frontend/index.html` в браузере **или** запустите локальный сервер в новом окне терминала:
 
 ```sh
 cd frontend

@@ -1,34 +1,82 @@
+/* Общие стили */
 body {
     font-family: Arial, sans-serif;
-    text-align: center;
     background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     margin: 0;
-    padding: 20px;
 }
 
+/* Контейнер */
 .container {
     background: white;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    margin: auto;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
 }
 
+/* Заголовок */
+h1 {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+/* Группы ввода и вывода */
+.input-group, .output-group, .error-group {
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+/* Метки */
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Поле ввода */
 input {
-    width: 80%;
-    padding: 10px;
-    margin: 10px 0;
+    width: 90%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
 }
 
-button {
-    padding: 10px;
-    background: #007BFF;
+/* Поля результата и ошибки */
+#result, #error {
+    width: 90%;
+    padding: 8px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    min-height: 24px;
+    font-size: 16px;
+}
+
+/* Цвет ошибки */
+#error {
+    color: red;
+}
+
+/* Кнопка */
+.calculate-btn {
+    background-color: #007bff;
     color: white;
+    padding: 10px;
+    font-size: 16px;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
+    width: 100%;
+    transition: 0.3s;
 }
 
-button:hover {
-    background: #0056b3;
+.calculate-btn:hover {
+    background-color: #0056b3;
 }

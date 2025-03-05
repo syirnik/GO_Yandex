@@ -3,17 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор</title>
+    <title>Распределённый калькулятор</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Распределённый калькулятор</h1>
-        <input type="text" id="expression" placeholder="Введите выражение">
-        <button onclick="sendExpression()">Отправить</button>
-        
-        <h2>Результат: <span id="result">—</span></h2>
+
+        <!-- Поле для ввода выражения -->
+        <div class="input-group">
+            <label for="expression">Введите выражение:</label>
+            <input type="text" id="expression" placeholder="Например, 5 + 3 * 2">
+        </div>
+
+        <!-- Поле для вывода результата -->
+        <div class="output-group">
+            <label>Результат:</label>
+            <div id="result">—</div>
+        </div>
+
+        <!-- Поле для ошибок -->
+        <div class="error-group">
+            <label>Ошибка:</label>
+            <div id="error">—</div>
+        </div>
+
+        <!-- Кнопка отправки -->
+        <button class="calculate-btn" onclick="sendExpression()">Вычислить</button>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
