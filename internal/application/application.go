@@ -123,13 +123,14 @@ func (app *Application) ParseExpression(expression string) (int, error) {
 				task.Arg2 = res2
 				log.Printf("ParseExpression: Arg2 for task ID %d set to %f", task.ID, res2)
 			}
-			// Проверка деления на ноль
-			if token == "/" && task.Arg2 == 0 {
-				return 0, errors.New("division by zero detected")
-			}
-
-			// Если оба аргумента уже известны, добавляем задачу в очередь
-			if task.Arg1 != 0 && task.Arg2 != 0 {
+			// Проверяем, известны ли оба аргумента
+			_, exists1 := app.taskResults[task1ID]
+			_, exists2 := app.taskResults[task2ID]
+			if exists1 && exists2 {
+				// Проверка деления на ноль
+				if token == "/" && task.Arg2 == 0 {
+					return 0, errors.New("division by zero detected")
+				}
 				task.IsReady = true
 				log.Printf("ParseExpression: Task ID %d is ready (IsReady = %v)", task.ID, task.IsReady)
 				app.taskQueue = append(app.taskQueue, task)
@@ -243,6 +244,11 @@ func (app *Application) CompleteTask(taskID int, result float64) error {
 
 		// Если все зависимости выполнены, добавляем задачу в taskQueue
 		if ready {
+			// Проверка деления на ноль перед добавлением в очередь
+			if task.Operation == "/" && task.Arg2 == 0 {
+				log.Printf("CompleteTask: Division by zero detected for task ID %d", task.ID)
+				return errors.New("division by zero detected")
+			}
 			// Логируем изменение флага готовности
 			if !task.IsReady {
 				task.IsReady = true
